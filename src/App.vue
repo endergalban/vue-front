@@ -1,60 +1,83 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
-
+  <v-app id="inspire" flat>
+    <AppNavBar
+      v-if="false"
+      :lang="lang"
+      :mini-variant="miniVariant"
+      :user-email="userEmail"
+      @setMiniVariant="(payload) => miniVariant = payload"
+    />
+    <AppSideBar
+      v-if="false"
+      :lang="lang"
+      :menus="menus"
+      :mini-variant="miniVariant"
+      :user="user"
+    />
+    <AppSnackBar :lang="lang" />
     <v-main>
-      <HelloWorld/>
+      <v-container
+        class="fill-height"
+        fluid
+      >
+        <v-row
+          align="center"
+          justify="center"
+        >
+          <router-view/>
+        </v-row>
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import AppNavBar from '@/common/components/navbar/app-navbar.vue';
+import AppSideBar from '@/common/components/sidebar/app-sidebar.vue';
+import AppSnackBar from '@/common/components/snackbar/app-snackbar.vue';
 
 export default {
-  name: 'App',
-
   components: {
-    HelloWorld,
+    AppNavBar,
+    AppSideBar,
+    AppSnackBar,
   },
-
   data: () => ({
-    //
+    miniVariant: false,
+    userEmail: 'endergalban@gmail.com',
+    lang: 'es',
+    user: {
+      name: 'Ender Alberto Galban Rios',
+      role: 'Admin',
+    },
+    menus: [
+      { icon: 'mdi-contacts', text: 'Contacts' },
+      { icon: 'mdi-history', text: 'Frequently contacted' },
+      { icon: 'mdi-content-copy', text: 'Duplicates' },
+      {
+        icon: 'mdi-chevron-up',
+        'icon-alt': 'mdi-chevron-down',
+        text: 'Labels',
+        model: true,
+        children: [
+          { icon: 'mdi-plus', text: 'Create label' },
+        ],
+      },
+      {
+        icon: 'mdi-chevron-up',
+        'icon-alt': 'mdi-chevron-down',
+        text: 'More',
+        model: false,
+        children: [
+          { text: 'Import' },
+          { text: 'Export' },
+          { text: 'Print' },
+          { text: 'Undo changes' },
+          { text: 'Other contacts' },
+        ],
+      },
+      { icon: 'mdi-cog', text: 'Settings' },
+    ],
   }),
 };
 </script>
