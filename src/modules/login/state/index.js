@@ -26,7 +26,6 @@ export default {
   },
   actions: {
     async getCurrentUserAction({ commit }) {
-      commit('setLoading', true);
       try {
         const response = await services.getCurrentUser();
         const data = parseItem(response, 200);
@@ -35,12 +34,9 @@ export default {
       } catch (error) {
         commit('setError', error);
         throw new Error(error);
-      } finally {
-        commit('setLoading', false);
       }
     },
     async authLoginAction({ commit }, loginRequestData) {
-      commit('setLoading', true);
       try {
         const response = await services.authLogin(loginRequestData);
         const data = parseItem(response, 200);
@@ -49,13 +45,10 @@ export default {
         return data.access_token;
       } catch (error) {
         commit('setError', error);
-        throw new Error(error);
-      } finally {
-        commit('setLoading', false);
+        throw new Error(JSON.stringify(error));
       }
     },
     async authLogoutAction({ commit }) {
-      commit('setLoading', true);
       try {
         const response = await services.authLogout();
         const data = parseItem(response, 200);
@@ -67,8 +60,6 @@ export default {
         localStorage.removeItem('token');
         commit('setToken', null);
         throw new Error(error);
-      } finally {
-        commit('setLoading', false);
       }
     },
   },

@@ -6,31 +6,30 @@
   >
     <v-card class="elevation-12">
       <v-toolbar
-        color="primary"
-        dark
+        color="white"
         flat
       >
-        <v-toolbar-title>Login form</v-toolbar-title>
+        <v-toolbar-title>{{ appConstants.appName }}</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-card-text>
         <v-form>
           <v-text-field
-            label="Login"
-            name="login"
-            prepend-icon="mdi-account"
+            label="Email"
+            name="email"
             type="text"
             v-model.trim="$v.loginRequestData.email.$model"
-          ></v-text-field>
+            outlined
+          />
 
           <v-text-field
             id="password"
             label="Password"
             name="password"
-            prepend-icon="mdi-lock"
             type="password"
             v-model.trim="$v.loginRequestData.password.$model"
-          ></v-text-field>
+            outlined
+          />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -46,6 +45,7 @@
 </template>
 <script>
 import { mapActions, mapState } from 'vuex';
+import constants from '@/common/constants';
 import { required, email, minLength } from 'vuelidate/lib/validators';
 import mixin from '@/common/services/mixin';
 
@@ -54,10 +54,11 @@ export default {
   mixins: [mixin],
   data() {
     return {
-      vista: null,
+      appConstants: constants,
+      loading: false,
       loginRequestData: {
-        email: '',
-        password: '',
+        email: 'endergalban@sda.com',
+        password: 'qwqwqwq',
         remember: null,
       },
     };
@@ -78,7 +79,7 @@ export default {
     this.init();
   },
   computed: {
-    ...mapState('login', { token: 'token', error: 'error', loading: 'loading' }),
+    ...mapState('login', { token: 'token', error: 'error' }),
   },
   methods: {
     ...mapActions('login', [
@@ -88,33 +89,19 @@ export default {
     ]),
     async loginRequest() {
       try {
-        this.loadBar(true);
+        this.loadBar(this.loading);
         await this.authLoginAction(this.loginRequestData);
-        this.vista = 1;
         this.$router.push('/dashboard');
-      } catch {
-        let error = '';
-        if (this.error.response
-          && (this.error.response.status === 422 || this.error.response.status === 401)
-        ) {
-          error = 'Las credenciales ingresadas son inválidas';
-        }
-        this.notify({ text: error, color: 'error' });
+      } catch (error) {
+        // console.log(this.error);
+        console.log(error);
+        // this.notify({ text: error.response.status, color: 'error' });
       } finally {
         this.loadBar(false);
       }
     },
     async init() {
-      if (this.token) {
-        this.loadBar(true);
-        try {
-          this.$router.push('/dashboard');
-        } catch {
-          localStorage.removeItem('token');
-        } finally {
-          this.loadBar(false);
-        }
-      }
+      localStorage.removeItem('token');
     },
   },
 };
